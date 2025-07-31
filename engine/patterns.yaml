@@ -1,1 +1,13 @@
 # Patterns.Yaml
+patterns:
+  - id: closure_strong_self
+    description: "Closure captures 'self' strongly. Consider using [weak self] to avoid retain cycles."
+    regex: "\\{[^\\}]*self\\."
+
+  - id: combine_sink_no_store
+    description: "Combine sink without .store(in:) may leak subscriptions."
+    regex: "\\.sink\\s*\\{[^\\}]*\\}"
+
+  - id: delegate_not_weak
+    description: "Delegate property not marked as weak. Can cause retain cycles."
+    regex: "var\\s+\\w+\\s*:\\s*\\w+Delegate\\??"
