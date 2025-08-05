@@ -1,8 +1,12 @@
-# Matcher
+# matcher.py
+import os
 import yaml
 import re
 
-def load_patterns(yaml_path='engine/patterns.yaml'):
+def load_patterns():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    yaml_path = os.path.join(current_dir, "patterns.yaml")
+
     with open(yaml_path, 'r') as file:
         data = yaml.safe_load(file)
         patterns = []
@@ -10,7 +14,8 @@ def load_patterns(yaml_path='engine/patterns.yaml'):
             patterns.append({
                 'id': item['id'],
                 'description': item['description'],
-                'regex': re.compile(item['regex'])
+                'regex': re.compile(item['regex']),
+                'prompt': item.get('prompt', None)  # optional for later
             })
         return patterns
 
@@ -24,8 +29,9 @@ def scan_file(file_path, patterns):
                     results.append({
                         'file': file_path,
                         'line': i,
-                        'text': line.strip(),
-                        'id': pattern['id'],
-                        'description': pattern['description']
+                        'code': line.strip(),  # unified key name
+                        'description': pattern['description'],
+                        'prompt': pattern.get('prompt', None),
+                        'id': pattern['id']
                     })
     return results
